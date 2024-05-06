@@ -1,5 +1,9 @@
 import logo from './logo.svg';
 import './App.css';
+import Navbar from "./components/Navbar";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Home from "./components/Home"; // Placeholder for the home page
 
 function App() {
   return (
