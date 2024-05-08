@@ -1,7 +1,7 @@
 // src/components/Register.js
 import React, { useState } from "react";
-import { createUserWithEmailAndPassword } from "@firebase/auth";
-import { addDoc, collection } from "@firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 

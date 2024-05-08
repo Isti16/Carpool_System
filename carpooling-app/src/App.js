@@ -1,28 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+// src/App.js
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import Home from "./components/Home"; // Placeholder for the home page
+import Home from "./components/Home";
+import Profile from "./components/Profile";
+import PostRide from "./components/PostRide";
+import BrowseRides from "./components/BrowseRides";
+import BookRide from "./components/BookRide";
+import RideBookings from "./components/RideBookings";
+import ManageRides from "./components/ManageRides";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Navbar />
+      <main className="container mx-auto p-4">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/post-ride" element={<PostRide />} />
+          <Route path="/browse-rides" element={<BrowseRides />} />
+          <Route path="/book-ride/:rideID" element={<BookRide />} />
+          <Route path="/ride-bookings/:rideID" element={<RideBookings />} />
+          <Route path="/manage-rides" element={<ManageRides />} />
+        </Routes>
+      </main>
+    </Router>
   );
 }
 
