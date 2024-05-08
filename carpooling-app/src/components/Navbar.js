@@ -1,9 +1,8 @@
 // src/components/Navbar.js
 import React from "react";
-import { Link } from "react-router-dom";
-import { signOut } from "@firebase/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const navigate = useNavigate();

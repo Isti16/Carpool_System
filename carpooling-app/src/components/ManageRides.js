@@ -1,6 +1,6 @@
 // src/components/ManageRides.js
 import React, { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "@firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 

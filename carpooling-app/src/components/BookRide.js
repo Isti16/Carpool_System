@@ -1,15 +1,18 @@
 // src/components/BookRide.js
 import React, { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc } from "@firebase/firestore";
-import { addDoc, collection } from "@firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebaseConfig";
+import ErrorNotification from "./ErrorNotification";
+import SuccessNotification from "./SuccessNotification";
 
 export default function BookRide() {
   const { rideID } = useParams();
   const [ride, setRide] = useState(null);
   const [seatsBooked, setSeatsBooked] = useState(1);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,7 +48,8 @@ export default function BookRide() {
             remainingSeats: ride.remainingSeats - seatsBooked
           });
 
-          navigate("/");
+          setSuccess("Booking successful!");
+          setTimeout(() => navigate("/"), 2000);
         } catch (err) {
           setError(err.message);
         }
@@ -57,9 +61,13 @@ export default function BookRide() {
     }
   };
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+  const clearError = () => {
+    setError("");
+  };
+
+  const clearSuccess = () => {
+    setSuccess("");
+  };
 
   if (!ride) {
     return <p>Loading...</p>;
@@ -68,6 +76,8 @@ export default function BookRide() {
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
       <h2 className="text-2xl font-bold text-center mb-4">Book Ride</h2>
+      {error && <ErrorNotification message={error} clearError={clearError} />}
+      {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}
       <form onSubmit={handleBooking}>
         <p><strong>Driver:</strong> {ride.driverName}</p>
         <p><strong>Origin:</strong> {ride.origin}</p>
