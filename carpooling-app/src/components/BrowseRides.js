@@ -74,9 +74,9 @@ export default function BrowseRides() {
             <h3 className="text-lg font-bold">{ride.driverName}</h3>
             <p><strong>Origin:</strong> {ride.origin}</p>
             <p><strong>Destination:</strong> {ride.destination}</p>
-            <p><strong>Departure Time:</strong> {new Date(ride.depTime).toLocaleString()}</p>
+            <p><strong>Departure Time:</strong> {ride.depTime}</p>
             <p><strong>Available Seats:</strong> {ride.remainingSeats}</p>
-            <p><strong>Price per Seat:</strong> ${ride.price}</p>
+            <p><strong>Price per Seat:</strong> {ride.price} Ft</p>
           </li>
         ))}
       </ul>

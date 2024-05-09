@@ -31,6 +31,9 @@ export default function Navbar() {
           <Link to="/profile">
             <button className="bg-blue-700 text-white px-4 py-2 rounded">Profile</button>
           </Link>
+          <Link to="/register">
+            <button className="bg-blue-700 text-white px-4 py-2 rounded">Register</button>
+          </Link>
           <button
             onClick={handleLogout}
             className="bg-blue-700 text-white px-4 py-2 rounded"
