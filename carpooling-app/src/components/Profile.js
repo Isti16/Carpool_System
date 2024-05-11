@@ -33,6 +33,7 @@ export default function Profile() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+      <title>Profile Information</title>
       <h2 className="text-2xl font-bold text-center mb-4">Profile</h2>
       <p><strong>User ID:</strong> {user.userID}</p>
       <p><strong>Username:</strong> {user.username}</p>

@@ -38,6 +38,7 @@ export default function BrowseRides() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+      <title>Browsing Rides</title>
       <h2 className="text-2xl font-bold text-center mb-4">Browse Rides</h2>
       <form onSubmit={handleSearch} className="mb-8">
         <label className="block mb-2">Origin:</label>

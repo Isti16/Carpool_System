@@ -1,8 +1,16 @@
-// src/components/Login.js
 import React, { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+
+function getFirebaseErrorMessage(code) {
+  switch (code) {
+      case 'auth/invalid-credential':
+          return 'Invalid e-mail address or password.';
+      default:
+          return 'An unexpected error occurred. Please try again.';
+  }
+}
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -16,12 +24,14 @@ export default function Login() {
       await signInWithEmailAndPassword(auth, email, password);
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      const friendlyErrorMessage = getFirebaseErrorMessage(err.code);
+      setError(friendlyErrorMessage);
     }
   };
 
   return (
     <div className="max-w-md mx-auto my-8 p-4 bg-white shadow-md rounded">
+      <title>Login</title>
       <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>

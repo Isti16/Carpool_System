@@ -1,5 +1,4 @@
-// src/components/PostRide.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { addDoc, collection } from "@firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
@@ -13,6 +12,12 @@ export default function PostRide() {
   const [carModel, setCarModel] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!auth.currentUser) {
+      navigate("/login");
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,7 +38,6 @@ export default function PostRide() {
           price,
           carModel
         });
-
         navigate("/");
       } catch (err) {
         setError(err.message);
@@ -45,6 +49,7 @@ export default function PostRide() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+      <title>Post a Ride</title>
       <h2 className="text-2xl font-bold text-center mb-4">Post a Ride</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>

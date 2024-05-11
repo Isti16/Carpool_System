@@ -1,9 +1,17 @@
-// src/components/Register.js
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+
+function getFirebaseErrorMessage(code) {
+  switch (code) {
+      case 'auth/email-already-in-use':
+          return 'This username or email address is already in use by another account.';
+      default:
+          return 'An unexpected error occurred. Please try again.';
+  }
+}
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -31,12 +39,14 @@ export default function Register() {
 
       navigate("/");
     } catch (err) {
-      setError(err.message);
+      const friendlyErrorMessage = getFirebaseErrorMessage(err.code); // Using the custom error message function
+      setError(friendlyErrorMessage); // Setting the error message to state
     }
   };
 
   return (
     <div className="max-w-md mx-auto my-8 p-4 bg-white shadow-md rounded">
+      <title>Register</title>
       <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit}>

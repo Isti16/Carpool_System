@@ -75,6 +75,7 @@ export default function BookRide() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+      <title>Book a Ride</title>
       <h2 className="text-2xl font-bold text-center mb-4">Book Ride</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
       {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}
