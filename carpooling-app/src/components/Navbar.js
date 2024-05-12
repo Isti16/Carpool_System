@@ -1,6 +1,5 @@
-// src/components/Navbar.js
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 
@@ -12,34 +11,51 @@ export default function Navbar() {
     navigate("/login");
   };
 
+  const linkStyle = {
+    color: 'white',
+    textDecoration: 'none',
+    padding: '8px 15px',
+    margin: '0 5px',
+    borderRadius: '15px',
+    backgroundColor: 'transparent',
+    border: '1px solid white'
+  };
+
+  const activeStyle = {
+    backgroundColor: '#1d4ed8',
+    borderColor: '#1d4ed8'
+  };
+
   return (
-    <nav className="bg-blue-500 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-white text-xl font-bold">
+    <nav style={{ backgroundColor: '#007bff', padding: '10px 0' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '90%', margin: '0 auto' }}>
+        <NavLink to="/" style={{ ...linkStyle, fontWeight: 'bold', fontSize: '20px' }} end>
           Carpool System
-        </Link>
-        <div className="space-x-4">
-          <Link to="/browse-rides">
-            <button className="bg-blue-700 text-white px-4 py-2 rounded">Browse Rides</button>
-          </Link>
-          <Link to="/post-ride">
-            <button className="bg-blue-700 text-white px-4 py-2 rounded">Post a Ride</button>
-          </Link>
-          <Link to="/manage-rides">
-            <button className="bg-blue-700 text-white px-4 py-2 rounded">Manage Rides</button>
-          </Link>
-          <Link to="/profile">
-            <button className="bg-blue-700 text-white px-4 py-2 rounded">Profile</button>
-          </Link>
-          <Link to="/register">
-            <button className="bg-blue-700 text-white px-4 py-2 rounded">Register</button>
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="bg-blue-700 text-white px-4 py-2 rounded"
-          >
-            Logout
-          </button>
+        </NavLink>
+        <div>
+          <NavLink to="/browse-rides" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+            Browse Rides
+          </NavLink>
+          <NavLink to="/post-ride" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+            Post a Ride
+          </NavLink>
+          <NavLink to="/manage-rides" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+            Manage Rides
+          </NavLink>
+          <NavLink to="/profile" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+            Profile
+          </NavLink>
+          <NavLink to="/register" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+            Register
+          </NavLink>
+          {auth.currentUser && (
+            <button
+              onClick={handleLogout}
+              style={{ ...linkStyle, backgroundColor: '#e11d48', borderColor: '#e11d48' }} // Vörös gomb a kijelentkezéshez
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </nav>
