@@ -74,7 +74,7 @@ export default function BookRide() {
   }
 
   return (
-    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded card">
       <title>Book a Ride</title>
       <h2 className="text-2xl font-bold text-center mb-4">Book Ride</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
@@ -85,21 +85,15 @@ export default function BookRide() {
         <p><strong>Destination:</strong> {ride.destination}</p>
         <p><strong>Departure Time:</strong> {new Date(ride.depTime).toLocaleString()}</p>
         <p><strong>Remaining Seats:</strong> {ride.remainingSeats}</p>
-        <label className="block mb-2 mt-4">Seats to Book:</label>
+        <label>Seats to Book:</label>
         <input
           type="number"
           value={seatsBooked}
           onChange={(e) => setSeatsBooked(parseInt(e.target.value, 10))}
           min="1"
           max={ride.remainingSeats}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Book
-        </button>
+        <button type="submit" className="button-primary">Book</button>
       </form>
     </div>
   );

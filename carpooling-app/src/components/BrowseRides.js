@@ -37,37 +37,29 @@ export default function BrowseRides() {
   }, []);
 
   return (
-    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded card">
       <title>Browsing Rides</title>
       <h2 className="text-2xl font-bold text-center mb-4">Browse Rides</h2>
       <form onSubmit={handleSearch} className="mb-8">
-        <label className="block mb-2">Origin:</label>
+        <label>Origin:</label>
         <input
           type="text"
           value={origin}
           onChange={(e) => setOrigin(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
         />
-        <label className="block mb-2">Destination:</label>
+        <label>Destination:</label>
         <input
           type="text"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
         />
-        <label className="block mb-2">Date:</label>
+        <label>Date:</label>
         <input
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
         />
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Search
-        </button>
+        <button type="submit" className="button-primary">Search</button>
       </form>
       <ul>
         {rides.map((ride) => (
