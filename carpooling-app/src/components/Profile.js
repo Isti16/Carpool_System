@@ -25,8 +25,9 @@ export default function Profile() {
           const userDocSnap = await getDoc(userDocRef);
 
           if (userDocSnap.exists()) {
-            console.log("User document data:", userDocSnap.data());
-            setUser(userDocSnap.data());
+            const userData = userDocSnap.data();
+            console.log("User document data:", userData);
+            setUser(userData);
 
             const ridesQuery = query(collection(db, "rides"), where("driverID", "==", userAuth.uid));
             console.log("Fetching rides...");

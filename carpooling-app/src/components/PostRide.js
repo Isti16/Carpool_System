@@ -25,34 +25,30 @@ export default function PostRide() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
-    setSuccess(""); // Clear any previous success messages
+    setError(""); // Clear previous errors
+    setSuccess(""); // Clear previous success messages
 
     const userAuth = auth.currentUser;
     if (userAuth) {
-      if (origin && destination && depTime && availableSeats > 0 && price >= 0 && carModel) {
-        try {
-          await addDoc(collection(db, "rides"), {
-            availableSeats,
-            contact: userAuth.email,
-            depTime: new Date(depTime),
-            destination,
-            driverID: userAuth.uid,
-            driverName: userAuth.displayName || userAuth.email,
-            origin,
-            remainingSeats: availableSeats,
-            rideID: `${userAuth.uid}-${Date.now()}`,
-            intermediate,
-            price,
-            carModel
-          });
-          setSuccess("Ride posted successfully!");
-          setTimeout(() => navigate("/"), 2000);
-        } catch (err) {
-          setError(err.message);
-        }
-      } else {
-        setError("All fields must be filled out correctly.");
+      try {
+        await addDoc(collection(db, "rides"), {
+          availableSeats,
+          contact: userAuth.email,
+          depTime: new Date(depTime),
+          destination,
+          driverID: userAuth.uid,
+          driverName: userAuth.displayName || userAuth.email,
+          origin,
+          remainingSeats: availableSeats,
+          intermediate,
+          price,
+          carModel
+        });
+
+        setSuccess("Ride posted successfully!");
+        setTimeout(() => navigate("/"), 2000);
+      } catch (err) {
+        setError(err.message);
       }
     } else {
       setError("Please log in to post a ride.");

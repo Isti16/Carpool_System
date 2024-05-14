@@ -45,16 +45,16 @@ export default function Register() {
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         userID: user.uid,
-        username,
-        isDriver,
-        carModel
+        username: username || "", // Ensure username is not undefined
+        isDriver: isDriver, // Set isDriver to boolean value
+        carModel: carModel || "" // Ensure carModel is not undefined
       });
 
       // Log Firestore document creation
       console.log("User document created in Firestore");
 
       setSuccess("Registration successful!");
-      setTimeout(() => navigate("/"), 2000);
+      setTimeout(() => navigate("/profile"), 2000);
     } catch (err) {
       const friendlyErrorMessage = getFirebaseErrorMessage(err.code);
       setError(friendlyErrorMessage);
