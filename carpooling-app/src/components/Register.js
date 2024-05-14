@@ -3,6 +3,8 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
+import ErrorNotification from "./ErrorNotification";
+import SuccessNotification from "./SuccessNotification";
 
 function getFirebaseErrorMessage(code) {
   switch (code) {
@@ -24,11 +26,13 @@ export default function Register() {
   const [carModel, setCarModel] = useState("");
   const [isDriver, setIsDriver] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(""); // Clear any previous errors
+    setSuccess(""); // Clear any previous success messages
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -42,17 +46,27 @@ export default function Register() {
         carModel
       });
 
-      navigate("/");
+      setSuccess("Registration successful! Redirecting...");
+      setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       const friendlyErrorMessage = getFirebaseErrorMessage(err.code);
       setError(friendlyErrorMessage);
     }
   };
 
+  const clearError = () => {
+    setError("");
+  };
+
+  const clearSuccess = () => {
+    setSuccess("");
+  };
+
   return (
     <div className="max-w-md mx-auto my-8 p-4 bg-white shadow-lg rounded-lg">
       <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <ErrorNotification message={error} clearError={clearError} />}
+      {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block mb-2">Username:</label>

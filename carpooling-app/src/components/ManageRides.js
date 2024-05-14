@@ -1,12 +1,14 @@
-// src/components/ManageRides.js
 import React, { useState, useEffect } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
+import ErrorNotification from "./ErrorNotification";
+import SuccessNotification from "./SuccessNotification";
 
 export default function ManageRides() {
   const [rides, setRides] = useState([]);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,7 +20,11 @@ export default function ManageRides() {
           const snapshots = await getDocs(q);
           setRides(snapshots.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
         } catch (err) {
-          setError(err.message);
+          if (err.code === "unavailable") {
+            setError("Network error: Please check your internet connection.");
+          } else {
+            setError(err.message);
+          }
         }
       } else {
         navigate("/login");
@@ -28,14 +34,27 @@ export default function ManageRides() {
     fetchRides();
   }, [navigate]);
 
+  const clearError = () => {
+    setError("");
+  };
+
+  const clearSuccess = () => {
+    setSuccess("");
+  };
+
   if (error) {
-    return <p>{error}</p>;
+    return (
+      <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+        <ErrorNotification message={error} clearError={clearError} />
+      </div>
+    );
   }
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
       <title>Manage Rides</title>
       <h2 className="text-2xl font-bold text-center mb-4">Manage Rides</h2>
+      {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}
       {rides.length > 0 ? (
         <ul>
           {rides.map((ride) => (

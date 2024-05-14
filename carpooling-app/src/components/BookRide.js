@@ -1,4 +1,3 @@
-// src/components/BookRide.js
 import React, { useState, useEffect } from "react";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { addDoc, collection } from "firebase/firestore";
@@ -17,12 +16,20 @@ export default function BookRide() {
 
   useEffect(() => {
     const fetchRide = async () => {
-      const docRef = doc(db, "rides", rideID);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        setRide(docSnap.data());
-      } else {
-        setError("Ride not found");
+      try {
+        const docRef = doc(db, "rides", rideID);
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) {
+          setRide(docSnap.data());
+        } else {
+          setError("Ride not found");
+        }
+      } catch (err) {
+        if (err.code === "unavailable") {
+          setError("Network error: Please check your internet connection.");
+        } else {
+          setError(err.message);
+        }
       }
     };
 
@@ -51,7 +58,11 @@ export default function BookRide() {
           setSuccess("Booking successful!");
           setTimeout(() => navigate("/"), 2000);
         } catch (err) {
-          setError(err.message);
+          if (err.code === "unavailable") {
+            setError("Network error: Please check your internet connection.");
+          } else {
+            setError(err.message);
+          }
         }
       } else {
         setError("Not enough seats available");
@@ -74,7 +85,7 @@ export default function BookRide() {
   }
 
   return (
-    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded card">
+    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
       <title>Book a Ride</title>
       <h2 className="text-2xl font-bold text-center mb-4">Book Ride</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
@@ -85,15 +96,21 @@ export default function BookRide() {
         <p><strong>Destination:</strong> {ride.destination}</p>
         <p><strong>Departure Time:</strong> {new Date(ride.depTime).toLocaleString()}</p>
         <p><strong>Remaining Seats:</strong> {ride.remainingSeats}</p>
-        <label>Seats to Book:</label>
+        <label className="block mb-2 mt-4">Seats to Book:</label>
         <input
           type="number"
           value={seatsBooked}
           onChange={(e) => setSeatsBooked(parseInt(e.target.value, 10))}
           min="1"
           max={ride.remainingSeats}
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
         />
-        <button type="submit" className="button-primary">Book</button>
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+        >
+          Book
+        </button>
       </form>
     </div>
   );
