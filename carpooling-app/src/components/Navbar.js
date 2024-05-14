@@ -1,3 +1,4 @@
+// src/components/Navbar.js
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
@@ -13,7 +14,6 @@ export default function Navbar() {
 
   const linkStyle = {
     color: 'white',
-    textDecoration: 'none',
     padding: '8px 15px',
     margin: '0 5px',
     borderRadius: '15px',
@@ -42,19 +42,27 @@ export default function Navbar() {
           <NavLink to="/manage-rides" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
             Manage Rides
           </NavLink>
-          <NavLink to="/profile" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
-            Profile
-          </NavLink>
-          <NavLink to="/register" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
-            Register
-          </NavLink>
-          {auth.currentUser && (
-            <button
-              onClick={handleLogout}
-              style={{ ...linkStyle, backgroundColor: '#e11d48', borderColor: '#e11d48' }} // Vörös gomb a kijelentkezéshez
-            >
-              Logout
-            </button>
+          {auth.currentUser ? (
+            <>
+              <NavLink to="/profile" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+                Profile
+              </NavLink>
+              <button
+                onClick={handleLogout}
+                style={{ ...linkStyle, backgroundColor: '#e11d48', borderColor: '#e11d48' }}
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+                Login
+              </NavLink>
+              <NavLink to="/register" style={({ isActive }) => isActive ? { ...linkStyle, ...activeStyle } : linkStyle}>
+                Register
+              </NavLink>
+            </>
           )}
         </div>
       </div>

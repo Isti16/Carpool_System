@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import ErrorNotification from "./ErrorNotification";
@@ -31,26 +31,34 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear any previous errors
-    setSuccess(""); // Clear any previous success messages
+    setError(""); // Clear previous errors
+    setSuccess(""); // Clear previous success messages
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      await addDoc(collection(db, "users"), {
+      // Log user creation
+      console.log("User created:", user);
+
+      // Create user document in Firestore
+      await setDoc(doc(db, "users", user.uid), {
         email: user.email,
-        isDriver,
         userID: user.uid,
         username,
+        isDriver,
         carModel
       });
 
-      setSuccess("Registration successful! Redirecting...");
+      // Log Firestore document creation
+      console.log("User document created in Firestore");
+
+      setSuccess("Registration successful!");
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       const friendlyErrorMessage = getFirebaseErrorMessage(err.code);
       setError(friendlyErrorMessage);
+      console.error("Error during registration:", err);
     }
   };
 
@@ -69,7 +77,7 @@ export default function Register() {
       {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block mb-2">Username:</label>
+          <label>Username:</label>
           <input
             type="text"
             value={username}
@@ -79,7 +87,7 @@ export default function Register() {
           />
         </div>
         <div>
-          <label className="block mb-2">Email:</label>
+          <label>Email:</label>
           <input
             type="email"
             value={email}
@@ -89,7 +97,7 @@ export default function Register() {
           />
         </div>
         <div>
-          <label className="block mb-2">Password:</label>
+          <label>Password:</label>
           <input
             type="password"
             value={password}
@@ -99,17 +107,17 @@ export default function Register() {
           />
         </div>
         <div>
-          <label className="block mb-2">Are you a Driver?</label>
+          <label>Are you a Driver?</label>
           <input
             type="checkbox"
             checked={isDriver}
             onChange={() => setIsDriver(!isDriver)}
-            className="w-4 h-4"
+            className="w-5 h-5"
           />
         </div>
         {isDriver && (
           <div>
-            <label className="block mb-2">Car Model:</label>
+            <label>Car Model:</label>
             <input
               type="text"
               value={carModel}
@@ -119,7 +127,10 @@ export default function Register() {
             />
           </div>
         )}
-        <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700">
+        <button
+          type="submit"
+          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
+        >
           Register
         </button>
       </form>
