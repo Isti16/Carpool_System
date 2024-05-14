@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { addDoc, collection } from "firebase/firestore";
+import { doc, getDoc, updateDoc, addDoc, collection } from "firebase/firestore";
 import { useParams, useNavigate } from "react-router-dom";
 import { auth, db } from "../firebaseConfig";
 import ErrorNotification from "./ErrorNotification";
@@ -25,11 +24,7 @@ export default function BookRide() {
           setError("Ride not found");
         }
       } catch (err) {
-        if (err.code === "unavailable") {
-          setError("Network error: Please check your internet connection.");
-        } else {
-          setError(err.message);
-        }
+        setError(err.message);
       }
     };
 
@@ -47,22 +42,18 @@ export default function BookRide() {
             contact: userAuth.email,
             passengerID: userAuth.uid,
             rideID,
-            seatsBooked
+            seatsBooked,
           });
 
           const rideRef = doc(db, "rides", rideID);
           await updateDoc(rideRef, {
-            remainingSeats: ride.remainingSeats - seatsBooked
+            remainingSeats: ride.remainingSeats - seatsBooked,
           });
 
           setSuccess("Booking successful!");
           setTimeout(() => navigate("/"), 2000);
         } catch (err) {
-          if (err.code === "unavailable") {
-            setError("Network error: Please check your internet connection.");
-          } else {
-            setError(err.message);
-          }
+          setError(err.message);
         }
       } else {
         setError("Not enough seats available");
@@ -86,7 +77,6 @@ export default function BookRide() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
-      <title>Book a Ride</title>
       <h2 className="text-2xl font-bold text-center mb-4">Book Ride</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
       {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}

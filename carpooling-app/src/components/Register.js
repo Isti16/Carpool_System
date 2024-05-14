@@ -31,34 +31,26 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
-    setSuccess(""); // Clear previous success messages
+    setError("");
+    setSuccess("");
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      // Log user creation
-      console.log("User created:", user);
-
-      // Create user document in Firestore
       await setDoc(doc(db, "users", user.uid), {
         email: user.email,
         userID: user.uid,
-        username: username || "", // Ensure username is not undefined
-        isDriver: isDriver, // Set isDriver to boolean value
-        carModel: carModel || "" // Ensure carModel is not undefined
+        username: username || "",
+        isDriver: isDriver,
+        carModel: carModel || ""
       });
-
-      // Log Firestore document creation
-      console.log("User document created in Firestore");
 
       setSuccess("Registration successful!");
       setTimeout(() => navigate("/profile"), 2000);
     } catch (err) {
       const friendlyErrorMessage = getFirebaseErrorMessage(err.code);
       setError(friendlyErrorMessage);
-      console.error("Error during registration:", err);
     }
   };
 

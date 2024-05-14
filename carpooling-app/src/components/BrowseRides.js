@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "@firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import ErrorNotification from "./ErrorNotification";
 
 export default function BrowseRides() {
   const [rides, setRides] = useState([]);
@@ -10,7 +11,8 @@ export default function BrowseRides() {
     const fetchRides = async () => {
       try {
         const snapshot = await getDocs(collection(db, "rides"));
-        setRides(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+        const ridesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        setRides(ridesData);
       } catch (err) {
         setError("Failed to fetch rides. Please try again later.");
         console.error("Error fetching rides:", err);
@@ -20,11 +22,14 @@ export default function BrowseRides() {
     fetchRides();
   }, []);
 
+  const clearError = () => {
+    setError("");
+  };
+
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
-      <title>Browsing Rides</title>
       <h2 className="text-2xl font-bold text-center mb-4">Browse Rides</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+      {error && <ErrorNotification message={error} clearError={clearError} />}
       <ul>
         {rides.map((ride) => (
           <li key={ride.id} className="mb-4 p-4 bg-gray-100 rounded">

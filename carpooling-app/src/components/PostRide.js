@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { addDoc, collection } from "@firebase/firestore";
+import { addDoc, collection } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import ErrorNotification from "./ErrorNotification";
@@ -25,23 +25,23 @@ export default function PostRide() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
-    setSuccess(""); // Clear previous success messages
+    setError("");
+    setSuccess("");
 
     const userAuth = auth.currentUser;
     if (userAuth) {
       try {
         await addDoc(collection(db, "rides"), {
-          availableSeats,
-          contact: userAuth.email,
-          depTime: new Date(depTime),
+          origin,
           destination,
+          depTime: new Date(depTime).toISOString(),
+          availableSeats: parseInt(availableSeats, 10),
+          contact: userAuth.email,
           driverID: userAuth.uid,
           driverName: userAuth.displayName || userAuth.email,
-          origin,
-          remainingSeats: availableSeats,
+          remainingSeats: parseInt(availableSeats, 10),
           intermediate,
-          price,
+          price: parseFloat(price),
           carModel
         });
 

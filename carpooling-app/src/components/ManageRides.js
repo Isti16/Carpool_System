@@ -41,7 +41,6 @@ export default function ManageRides() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
-      <title>Manage Rides</title>
       <h2 className="text-2xl font-bold text-center mb-4">Manage Rides</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
       {rides.length > 0 ? (

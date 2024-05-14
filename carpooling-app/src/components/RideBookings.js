@@ -1,8 +1,8 @@
-// src/components/RideBookings.js
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, query, where, getDocs } from "@firebase/firestore";
+import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
+import ErrorNotification from "./ErrorNotification";
 
 export default function RideBookings() {
   const { rideID } = useParams();
@@ -31,8 +31,12 @@ export default function RideBookings() {
     fetchRideData();
   }, [rideID]);
 
+  const clearError = () => {
+    setError("");
+  };
+
   if (error) {
-    return <p>{error}</p>;
+    return <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded"><ErrorNotification message={error} clearError={clearError} /></div>;
   }
 
   if (!ride) {
@@ -41,7 +45,6 @@ export default function RideBookings() {
 
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
-      <title>Bookings for Ride</title>
       <h2 className="text-2xl font-bold text-center mb-4">Bookings for Ride</h2>
       <p><strong>Driver:</strong> {ride.driverName}</p>
       <p><strong>Origin:</strong> {ride.origin}</p>
