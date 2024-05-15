@@ -61,18 +61,18 @@ export default function BrowseRides() {
     <div className="container">
       <h2 className="text-2xl font-bold text-center mb-4">Browse Rides</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
-      <ul>
+      <div className="browse-rides-container">
         {rides.map((ride) => (
-          <li key={ride.id} className="card">
+          <div key={ride.id} className="card">
             <h3 className="text-lg font-bold">{ride.driverName}</h3>
             <p><strong>Origin:</strong> {ride.origin}</p>
             <p><strong>Destination:</strong> {ride.destination}</p>
             <p><strong>Departure Time:</strong> {ride.depTime.toLocaleString()}</p>
             <p><strong>Available Seats:</strong> {ride.remainingSeats}</p>
             <p><strong>Price per Seat:</strong> {ride.price} Ft</p>
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       {loading && <div className="spinner"></div>}
       {hasMore && !loading && (
         <button onClick={loadMore} className="button-primary mt-4">

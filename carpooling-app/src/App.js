@@ -23,26 +23,27 @@ function App() {
   return (
     <Router>
       <header>
-        <div className="navbar">
+        <div className="header-title">
           <h1>Carpool System</h1>
-          <nav>
-            <NavLink to="/" exact="true">Home</NavLink>
-            <NavLink to="/browse-rides">Browse Rides</NavLink>
-            <NavLink to="/post-ride">Post a Ride</NavLink>
-            <NavLink to="/manage-rides">Manage Rides</NavLink>
-            {auth.currentUser ? (
-              <>
-                <NavLink to="/profile">Profile</NavLink>
-                <button onClick={handleLogout}>Logout</button>
-              </>
-            ) : (
-              <>
-                <NavLink to="/login">Login</NavLink>
-                <NavLink to="/register">Register</NavLink>
-              </>
-            )}
-          </nav>
+          <p>Find or offer rides easily!</p>
         </div>
+        <nav className="navbar">
+          <NavLink to="/" exact="true">Home</NavLink>
+          <NavLink to="/browse-rides">Browse Rides</NavLink>
+          <NavLink to="/post-ride">Post a Ride</NavLink>
+          <NavLink to="/manage-rides">Manage Rides</NavLink>
+          {auth.currentUser ? (
+            <>
+              <NavLink to="/profile">Profile</NavLink>
+              <button onClick={handleLogout}>Logout</button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/login">Login</NavLink>
+              <NavLink to="/register">Register</NavLink>
+            </>
+          )}
+        </nav>
       </header>
       <main className="container">
         <Routes>
