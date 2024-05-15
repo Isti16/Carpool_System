@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, NavLink } from "react-router-dom";
+import { auth } from "./firebaseConfig"; // Import auth from firebaseConfig
 import Navbar from "./components/Navbar";
 import Login from "./components/Login";
 import Register from "./components/Register";
@@ -11,12 +12,39 @@ import BookRide from "./components/BookRide";
 import RideBookings from "./components/RideBookings";
 import ManageRides from "./components/ManageRides";
 import ProtectedRoute from "./components/ProtectedRoute";
+import './styles.css';  // Ensure this file exists in src directory
 
 function App() {
+  const handleLogout = async () => {
+    await auth.signOut();
+    window.location.href = "/login";
+  };
+
   return (
     <Router>
-      <Navbar />
-      <main className="container mx-auto p-4">
+      <header>
+        <div className="navbar">
+          <h1>Carpool System</h1>
+          <nav>
+            <NavLink to="/" exact="true">Home</NavLink>
+            <NavLink to="/browse-rides">Browse Rides</NavLink>
+            <NavLink to="/post-ride">Post a Ride</NavLink>
+            <NavLink to="/manage-rides">Manage Rides</NavLink>
+            {auth.currentUser ? (
+              <>
+                <NavLink to="/profile">Profile</NavLink>
+                <button onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <>
+                <NavLink to="/login">Login</NavLink>
+                <NavLink to="/register">Register</NavLink>
+              </>
+            )}
+          </nav>
+        </div>
+      </header>
+      <main className="container">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

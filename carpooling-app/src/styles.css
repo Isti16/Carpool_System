@@ -2,7 +2,7 @@
 body {
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f5f5;
+  background-color: #f0f2f5;
   color: #333;
 }
 
@@ -16,12 +16,13 @@ body {
 header {
   background-color: #007bff;
   color: white;
-  padding: 10px 0;
+  padding: 15px 0;
   text-align: center;
   position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
@@ -38,9 +39,11 @@ header h1 {
 
 .navbar a {
   color: white;
-  padding: 10px 20px;
+  padding: 10px 15px;
   display: inline-block;
   transition: background 0.3s, color 0.3s;
+  border-radius: 5px;
+  margin: 0 5px;
 }
 
 .navbar a:hover {
@@ -64,7 +67,7 @@ header h1 {
 
 /* Main content styles */
 main {
-  padding-top: 80px; /* Adjust for fixed header */
+  padding-top: 100px; /* Adjust for fixed header */
 }
 
 /* Card styles */
@@ -72,14 +75,14 @@ main {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Form styles */

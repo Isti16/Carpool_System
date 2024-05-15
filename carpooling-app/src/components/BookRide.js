@@ -11,6 +11,7 @@ export default function BookRide() {
   const [seatsBooked, setSeatsBooked] = useState(1);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +26,8 @@ export default function BookRide() {
         }
       } catch (err) {
         setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -71,7 +74,7 @@ export default function BookRide() {
     setSuccess("");
   };
 
-  if (!ride) {
+  if (loading) {
     return <p>Loading...</p>;
   }
 

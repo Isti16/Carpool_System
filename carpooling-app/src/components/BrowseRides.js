@@ -1,47 +1,85 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit, startAfter } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import ErrorNotification from "./ErrorNotification";
+
+const PAGE_SIZE = 10; // Number of rides to fetch per page
 
 export default function BrowseRides() {
   const [rides, setRides] = useState([]);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [lastDoc, setLastDoc] = useState(null); // For pagination
+  const [hasMore, setHasMore] = useState(true); // To check if more data is available
 
   useEffect(() => {
-    const fetchRides = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, "rides"));
-        const ridesData = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-        setRides(ridesData);
-      } catch (err) {
-        setError("Failed to fetch rides. Please try again later.");
-        console.error("Error fetching rides:", err);
-      }
-    };
-
     fetchRides();
   }, []);
+
+  const fetchRides = async () => {
+    setLoading(true);
+    try {
+      let q = query(collection(db, "rides"), orderBy("depTime"), limit(PAGE_SIZE));
+      if (lastDoc) {
+        q = query(q, startAfter(lastDoc));
+      }
+
+      const snapshot = await getDocs(q);
+      const ridesData = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        depTime: doc.data().depTime ? new Date(doc.data().depTime) : new Date(),
+        remainingSeats: doc.data().remainingSeats || 0,
+      }));
+
+      setRides((prevRides) => [...prevRides, ...ridesData]);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+
+      // If fewer results than PAGE_SIZE, no more data to fetch
+      if (ridesData.length < PAGE_SIZE) {
+        setHasMore(false);
+      }
+    } catch (err) {
+      setError("Failed to fetch rides. Please try again later.");
+      console.error("Error fetching rides:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadMore = () => {
+    if (!loading && hasMore) {
+      fetchRides();
+    }
+  };
 
   const clearError = () => {
     setError("");
   };
 
   return (
-    <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
+    <div className="container">
       <h2 className="text-2xl font-bold text-center mb-4">Browse Rides</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
       <ul>
         {rides.map((ride) => (
-          <li key={ride.id} className="mb-4 p-4 bg-gray-100 rounded">
+          <li key={ride.id} className="card">
             <h3 className="text-lg font-bold">{ride.driverName}</h3>
             <p><strong>Origin:</strong> {ride.origin}</p>
             <p><strong>Destination:</strong> {ride.destination}</p>
-            <p><strong>Departure Time:</strong> {new Date(ride.depTime).toLocaleString()}</p>
+            <p><strong>Departure Time:</strong> {ride.depTime.toLocaleString()}</p>
             <p><strong>Available Seats:</strong> {ride.remainingSeats}</p>
             <p><strong>Price per Seat:</strong> {ride.price} Ft</p>
           </li>
         ))}
       </ul>
+      {loading && <div className="spinner"></div>}
+      {hasMore && !loading && (
+        <button onClick={loadMore} className="button-primary mt-4">
+          Load More
+        </button>
+      )}
+      {!hasMore && <p>No more rides available.</p>}
     </div>
   );
 }
