@@ -1,6 +1,6 @@
 // src/firebaseConfig.js
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged  } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -29,4 +29,4 @@ enableIndexedDbPersistence(db).catch((err) => {
   }
 });
 
-export { app, auth, db };
+export { auth, db, onAuthStateChanged };

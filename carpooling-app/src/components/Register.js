@@ -1,3 +1,4 @@
+// src/components/Register.js
 import React, { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
@@ -63,68 +64,60 @@ export default function Register() {
   };
 
   return (
-    <div className="max-w-md mx-auto my-8 p-4 bg-white shadow-lg rounded-lg">
+    <div className="container">
       <h2 className="text-2xl font-bold text-center mb-4">Register</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
       {success && <SuccessNotification message={success} clearSuccess={clearSuccess} />}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label>Username:</label>
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label>Are you a Driver?</label>
-          <input
-            type="checkbox"
-            checked={isDriver}
-            onChange={() => setIsDriver(!isDriver)}
-            className="w-5 h-5"
-          />
-        </div>
-        {isDriver && (
+        <div className="form-grid">
           <div>
-            <label>Car Model:</label>
+            <label>Username:</label>
             <input
               type="text"
-              value={carModel}
-              onChange={(e) => setCarModel(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
-        )}
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700"
-        >
-          Register
-        </button>
+          <div>
+            <label>Email:</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Password:</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label>Are you a Driver?</label>
+            <input
+              type="checkbox"
+              checked={isDriver}
+              onChange={() => setIsDriver(!isDriver)}
+            />
+          </div>
+          {isDriver && (
+            <div>
+              <label>Car Model:</label>
+              <input
+                type="text"
+                value={carModel}
+                onChange={(e) => setCarModel(e.target.value)}
+                required
+              />
+            </div>
+          )}
+        </div>
+        <button type="submit">Register</button>
       </form>
     </div>
   );

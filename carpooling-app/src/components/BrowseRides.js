@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, query, orderBy, limit, startAfter } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, limit, startAfter, where } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import ErrorNotification from "./ErrorNotification";
 
-const PAGE_SIZE = 10; // Number of rides to fetch per page
+const PAGE_SIZE = 10;
 
 export default function BrowseRides() {
   const [rides, setRides] = useState([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [lastDoc, setLastDoc] = useState(null); // For pagination
-  const [hasMore, setHasMore] = useState(true); // To check if more data is available
+  const [hasMore, setHasMore] = useState(true); // To check for more data
 
   useEffect(() => {
     fetchRides();
@@ -19,29 +19,51 @@ export default function BrowseRides() {
   const fetchRides = async () => {
     setLoading(true);
     try {
-      let q = query(collection(db, "rides"), orderBy("depTime"), limit(PAGE_SIZE));
-      if (lastDoc) {
-        q = query(q, startAfter(lastDoc));
-      }
+      let baseQuery = query(
+        collection(db, "rides"),
+        orderBy("depTime", "desc"),
+        where("remainingSeats", ">", 0) // Filter for available seats
+      );
 
-      const snapshot = await getDocs(q);
-      const ridesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        depTime: doc.data().depTime ? new Date(doc.data().depTime) : new Date(),
-        remainingSeats: doc.data().remainingSeats || 0,
-      }));
+      const queryWithLimit = lastDoc
+        ? query(baseQuery, startAfter(lastDoc), limit(PAGE_SIZE))
+        : query(baseQuery, limit(PAGE_SIZE));
 
-      setRides((prevRides) => [...prevRides, ...ridesData]);
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      console.log("Executing query:", queryWithLimit);
 
-      // If fewer results than PAGE_SIZE, no more data to fetch
-      if (ridesData.length < PAGE_SIZE) {
+      const snapshot = await getDocs(queryWithLimit);
+      console.log("Snapshot:", snapshot);
+
+      if (!snapshot.empty) {
+        const ridesData = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          console.log("Document data:", data);
+          return {
+            id: doc.id,
+            ...data,
+            depTime: new Date(data.depTime), // Convert string to Date object
+          };
+        });
+
+        console.log("Fetched rides data: ", ridesData);
+
+        if (lastDoc) {
+          setRides((prevRides) => [...prevRides, ...ridesData]);
+        } else {
+          setRides(ridesData);
+        }
+        
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+
+        if (snapshot.docs.length < PAGE_SIZE) {
+          setHasMore(false);
+        }
+      } else {
         setHasMore(false);
       }
-    } catch (err) {
+    } catch (error) {
       setError("Failed to fetch rides. Please try again later.");
-      console.error("Error fetching rides:", err);
+      console.error("Error fetching rides:", error);
     } finally {
       setLoading(false);
     }
@@ -58,12 +80,13 @@ export default function BrowseRides() {
   };
 
   return (
-    <div className="container">
+    <div className="container mx-auto my-8 p-4">
       <h2 className="text-2xl font-bold text-center mb-4">Browse Rides</h2>
       {error && <ErrorNotification message={error} clearError={clearError} />}
       <div className="browse-rides-container">
+        {rides.length === 0 && !loading && <p>No rides available.</p>}
         {rides.map((ride) => (
-          <div key={ride.id} className="card">
+          <div key={ride.id} className="card bg-white p-4 mb-4 shadow-md rounded-lg">
             <h3 className="text-lg font-bold">{ride.driverName}</h3>
             <p><strong>Origin:</strong> {ride.origin}</p>
             <p><strong>Destination:</strong> {ride.destination}</p>
@@ -74,12 +97,11 @@ export default function BrowseRides() {
         ))}
       </div>
       {loading && <div className="spinner"></div>}
-      {hasMore && !loading && (
+      {hasMore && !loading && rides.length > 0 && (
         <button onClick={loadMore} className="button-primary mt-4">
           Load More
         </button>
       )}
-      {!hasMore && <p>No more rides available.</p>}
     </div>
   );
 }
