@@ -8,7 +8,7 @@ export default function Navbar({ user, handleLogout }) {
         Home
       </NavLink>
       <NavLink to="/post-ride" className={({ isActive }) => isActive ? "active" : ""}>
-        Post a Ride
+        Post Ride
       </NavLink>
       <NavLink to="/manage-rides" className={({ isActive }) => isActive ? "active" : ""}>
         Manage Rides
