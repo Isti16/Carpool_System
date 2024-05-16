@@ -1,62 +1,48 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { doc, getDoc, collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import ErrorNotification from "./ErrorNotification";
 
 export default function RideBookings() {
   const { rideID } = useParams();
-  const [ride, setRide] = useState(null);
   const [bookings, setBookings] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchRideData = async () => {
+    const fetchBookings = async () => {
       try {
-        const rideDoc = await getDoc(doc(db, "rides", rideID));
-        if (rideDoc.exists()) {
-          setRide(rideDoc.data());
-
-          const bookingsQuery = query(collection(db, "bookings"), where("rideID", "==", rideID));
-          const bookingSnapshots = await getDocs(bookingsQuery);
-          setBookings(bookingSnapshots.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
-        } else {
-          setError("Ride not found.");
-        }
+        const bookingsQuery = query(
+          collection(db, "bookings"),
+          where("rideID", "==", rideID)
+        );
+        const bookingsSnapshot = await getDocs(bookingsQuery);
+        const bookingsData = bookingsSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setBookings(bookingsData);
       } catch (err) {
         setError(err.message);
       }
     };
 
-    fetchRideData();
+    fetchBookings();
   }, [rideID]);
 
   const clearError = () => {
     setError("");
   };
 
-  if (error) {
-    return <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded"><ErrorNotification message={error} clearError={clearError} /></div>;
-  }
-
-  if (!ride) {
-    return <p>Loading...</p>;
-  }
-
   return (
     <div className="max-w-lg mx-auto my-8 p-4 bg-white shadow-md rounded">
-      <h2 className="text-2xl font-bold text-center mb-4">Bookings for Ride</h2>
-      <p><strong>Driver:</strong> {ride.driverName}</p>
-      <p><strong>Origin:</strong> {ride.origin}</p>
-      <p><strong>Destination:</strong> {ride.destination}</p>
-      <p><strong>Departure Time:</strong> {new Date(ride.depTime).toLocaleString()}</p>
-      <p><strong>Remaining Seats:</strong> {ride.remainingSeats}</p>
-      <h3 className="text-xl font-bold mt-4">Bookings:</h3>
+      <h2 className="text-2xl font-bold text-center mb-4">Ride Bookings</h2>
+      {error && <ErrorNotification message={error} clearError={clearError} />}
       {bookings.length > 0 ? (
         <ul>
           {bookings.map((booking) => (
-            <li key={booking.id} className="mb-2 p-2 bg-gray-100 rounded">
-              <p><strong>Passenger:</strong> {booking.contact}</p>
+            <li key={booking.id} className="mb-4 p-4 bg-gray-100 rounded">
+              <p><strong>Contact:</strong> {booking.contact}</p>
               <p><strong>Seats Booked:</strong> {booking.seatsBooked}</p>
             </li>
           ))}

@@ -1,4 +1,3 @@
-// src/components/SuccessNotification.js
 import React from "react";
 
 export default function SuccessNotification({ message, clearSuccess }) {

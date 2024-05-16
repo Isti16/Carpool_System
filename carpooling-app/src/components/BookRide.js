@@ -21,11 +21,14 @@ export default function BookRide() {
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setRide(docSnap.data());
+          console.log("Fetched ride data:", docSnap.data());
         } else {
           setError("Ride not found");
+          console.error("Ride not found for ID:", rideID);
         }
       } catch (err) {
         setError(err.message);
+        console.error("Error fetching ride:", err);
       } finally {
         setLoading(false);
       }
@@ -40,29 +43,37 @@ export default function BookRide() {
     if (userAuth) {
       if (ride && ride.remainingSeats >= seatsBooked) {
         try {
-          await addDoc(collection(db, "bookings"), {
+          const bookingData = {
             bookingID: `${userAuth.uid}-${rideID}`,
             contact: userAuth.email,
             passengerID: userAuth.uid,
             rideID,
             seatsBooked,
-          });
+          };
+
+          console.log("Booking data:", bookingData);
+
+          await addDoc(collection(db, "bookings"), bookingData);
 
           const rideRef = doc(db, "rides", rideID);
           await updateDoc(rideRef, {
             remainingSeats: ride.remainingSeats - seatsBooked,
           });
 
+          console.log("Booking successful for ride ID:", rideID);
           setSuccess("Booking successful!");
           setTimeout(() => navigate("/"), 2000);
         } catch (err) {
           setError(err.message);
+          console.error("Error during booking:", err);
         }
       } else {
         setError("Not enough seats available");
+        console.warn("Not enough seats available for ride ID:", rideID);
       }
     } else {
       setError("Please log in to book a ride.");
+      console.warn("User not logged in");
     }
   };
 

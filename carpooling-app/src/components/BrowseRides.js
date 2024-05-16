@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { collection, getDocs, query, orderBy, limit, startAfter, where } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 import ErrorNotification from "./ErrorNotification";
@@ -86,13 +87,16 @@ export default function BrowseRides() {
       <div className="browse-rides-container">
         {rides.length === 0 && !loading && <p>No rides available.</p>}
         {rides.map((ride) => (
-          <div key={ride.id} className="card bg-white p-4 mb-4 shadow-md rounded-lg">
+          <div key={ride.id} className="card">
             <h3 className="text-lg font-bold">{ride.driverName}</h3>
             <p><strong>Origin:</strong> {ride.origin}</p>
             <p><strong>Destination:</strong> {ride.destination}</p>
             <p><strong>Departure Time:</strong> {ride.depTime.toLocaleString()}</p>
             <p><strong>Available Seats:</strong> {ride.remainingSeats}</p>
             <p><strong>Price per Seat:</strong> {ride.price} Ft</p>
+            <Link to={`/book-ride/${ride.id}`} className="button-primary mt-4">
+              Book Ride
+            </Link>
           </div>
         ))}
       </div>

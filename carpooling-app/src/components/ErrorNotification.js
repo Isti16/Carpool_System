@@ -1,4 +1,3 @@
-// src/components/ErrorNotification.js
 import React from "react";
 
 export default function ErrorNotification({ message, clearError }) {

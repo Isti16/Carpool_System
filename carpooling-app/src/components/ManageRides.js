@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import { auth, db } from "../firebaseConfig";
 import { Link, useNavigate } from "react-router-dom";
 import ErrorNotification from "./ErrorNotification";
@@ -31,6 +31,22 @@ export default function ManageRides() {
     fetchRides();
   }, [navigate]);
 
+  const handleDelete = async (rideID) => {
+    if (window.confirm("Are you sure you want to delete this ride?")) {
+      try {
+        await deleteDoc(doc(db, "rides", rideID));
+        setRides(rides.filter((ride) => ride.id !== rideID));
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+  };
+
+  const handleUpdate = async (rideID) => {
+    // Navigate to a different component or page where you can update the ride details
+    navigate(`/edit-ride/${rideID}`);
+  };
+
   const clearError = () => {
     setError("");
   };
@@ -50,7 +66,9 @@ export default function ManageRides() {
               <h3 className="text-lg font-bold">{ride.origin} to {ride.destination}</h3>
               <p><strong>Departure Time:</strong> {new Date(ride.depTime).toLocaleString()}</p>
               <p><strong>Remaining Seats:</strong> {ride.remainingSeats}</p>
-              <Link to={`/ride-bookings/${ride.id}`} className="text-blue-500 underline">View Bookings</Link>
+              <button onClick={() => handleUpdate(ride.id)} className="text-blue-500 underline mr-2">Edit</button>
+              <button onClick={() => handleDelete(ride.id)} className="text-red-500 underline">Delete</button>
+              <Link to={`/ride-bookings/${ride.id}`} className="text-blue-500 underline ml-2">View Bookings</Link>
             </li>
           ))}
         </ul>
